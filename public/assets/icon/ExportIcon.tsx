@@ -1,0 +1,19 @@
+import React from 'react';
+
+const ExportIcon = () => {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      fontSize="24"
+      className="jss55183"
+    >
+      <path d="M11 2v12.17l-3.59-3.58L6 12l6 6 6-6-1.41-1.41L13 14.17V2h-2ZM5 20h14v2H5v-2Z" fill="currentColor"></path>
+    </svg>
+  );
+};
+
+export default ExportIcon;

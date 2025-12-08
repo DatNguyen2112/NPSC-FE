@@ -1,0 +1,381 @@
+import { PlusOutlined, ReloadOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { DrawerForm } from '@core/drawer';
+import { SubHeader } from '@layouts/admin';
+import { EFormRuleType, EFormType, EStatusState, QueryParams } from '@models';
+import { SearchWidget } from '@pages/shared-directory/search-widget';
+import {
+  CodeTypeManagement,
+  CodeTypeManagementFacade,
+  TypesCodeTypeManagement,
+  TypesCodeTypeManagementFacade,
+} from '@store';
+import { formatDayjsDate, scrollLeftWhenChanging, scrollTopWhenChanging, uuidv4 } from '@utils';
+import {
+  Button,
+  Card,
+  FormInstance,
+  Menu,
+  MenuProps,
+  Modal,
+  Pagination,
+  Space,
+  Spin,
+  Table,
+  Tooltip,
+  Typography,
+} from 'antd';
+import { ColumnsType } from 'antd/es/table';
+import dayjs from 'dayjs';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router';
+import { useSearchParams } from 'react-router-dom';
+import EditForm from './edit.drawer';
+
+interface DataType extends CodeTypeManagement {
+  stt?: number;
+  key?: string;
+  children?: DataType[];
+}
+
+const Page: React.FC = () => {
+  const navigate = useNavigate();
+  const menuRef = useRef<string>('KHO');
+  const [modalApi, contextModalApi] = Modal.useModal();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const formRef = useRef<FormInstance | undefined>(undefined);
+  const codeTypeManagementFacade = CodeTypeManagementFacade();
+  const typesCodeTypeManagementFacade = TypesCodeTypeManagementFacade();
+  const {
+    page,
+    size,
+    filter = '{}',
+    sort = '',
+    id = '',
+  } = {
+    ...Object.fromEntries(searchParams),
+    page: Number(searchParams.get('page') || 1),
+    size: Number(searchParams.get('size') || 20),
+  };
+  const parsedFilter = JSON.parse(filter);
+  // nếu không có type thì mặc định là KHO
+  if (!parsedFilter.type) {
+    parsedFilter.type = 'KHO';
+  }
+
+  useEffect(() => {
+    onChangeDataTable({ query: { page, size, filter: JSON.stringify({ ...parsedFilter }) } });
+    typesCodeTypeManagementFacade.get({ size: -1 });
+  }, []);
+
+  useEffect(() => {
+    switch (codeTypeManagementFacade.status) {
+      case EStatusState.postFulfilled:
+      case EStatusState.putFulfilled:
+      case EStatusState.deleteFulfilled:
+        onChangeDataTable({});
+        break;
+    }
+  }, [codeTypeManagementFacade.status]);
+
+  const dataSource: DataType[] =
+    codeTypeManagementFacade.pagination?.content.map(
+      (items, index): DataType => ({
+        stt:
+          (Number(codeTypeManagementFacade.pagination?.page ?? 0) - 1) *
+            Number(codeTypeManagementFacade.pagination?.size ?? 0) +
+          index +
+          1,
+        key: uuidv4(),
+        id: items.id ?? '-',
+        title: items.title ?? '-',
+        code: items.code ?? '-',
+        order: items.order ?? 0,
+        description: items.description ?? '-',
+        type: items.type ? items.type : '-',
+        createdOnDate: items.createdOnDate ? dayjs(items.createdOnDate).format('DD/MM/YYYY') : '-',
+        iconClass: items.iconClass,
+        codeTypeItems: items.codeTypeItems,
+      }),
+    ) ?? [];
+
+  const onChangeSearch = (value: string) => {
+    if (value) {
+      parsedFilter.fullTextSearch = value;
+    } else {
+      delete parsedFilter.fullTextSearch;
+    }
+    onChangeDataTable({
+      query: {
+        page: 1,
+        size,
+        filter: JSON.stringify({ ...parsedFilter }),
+      },
+    });
+  };
+
+  const handleDelete = (id: string) => {
+    modalApi.confirm({
+      title: 'Xoá danh mục?',
+      content: 'Mọi dữ liệu về danh mục này sẽ bị xoá vĩnh viễn. Bạn có chắc chắn muốn xoá danh mục này ?',
+      onOk: () => {
+        codeTypeManagementFacade.delete(id);
+      },
+      onCancel: () => {},
+      cancelText: 'Huỷ bỏ',
+      okText: 'Xác nhận',
+    });
+  };
+
+  const onChangeDataTable = (props: { query?: QueryParams; setKeyState?: object }) => {
+    if (!props.query) {
+      props.query = {
+        page,
+        size,
+        filter,
+        sort,
+        id,
+      };
+    }
+    const fillQuery: QueryParams = { ...codeTypeManagementFacade.query, ...props.query };
+    for (const key in fillQuery) {
+      if (!fillQuery[key as keyof QueryParams]) delete fillQuery[key as keyof QueryParams];
+    }
+    codeTypeManagementFacade.get(fillQuery);
+    navigate(
+      { search: new URLSearchParams(fillQuery as unknown as Record<string, string>).toString() },
+      { replace: true },
+    );
+    codeTypeManagementFacade.set({ query: props.query, ...props.setKeyState });
+  };
+
+  const column: ColumnsType<DataType> = [
+    {
+      title: 'STT',
+      dataIndex: 'stt',
+      key: 'stt',
+      align: 'center',
+      width: 80,
+    },
+    {
+      title: (
+        <span>
+          Mã{' '}
+          <Tooltip
+            color="white"
+            title={<p className="text-black">Mã thuế GTGT bắt buộc phải chứa thuế suất. VD: VAT5 là thuế GTGT 5%</p>}
+          >
+            <Button size={'small'} type={'link'} icon={<InfoCircleOutlined size={6} />} />
+          </Tooltip>
+        </span>
+      ),
+      dataIndex: 'code',
+      key: 'code',
+      width: 150,
+    },
+    {
+      title: 'Tên',
+      dataIndex: 'title',
+      key: 'title',
+      render: (value, record) => (
+        <Space>
+          <i className={`la-lg ${record?.iconClass}`}></i>
+          <Typography.Text>{value}</Typography.Text>
+        </Space>
+      ),
+    },
+    {
+      title: 'Ngày tạo',
+      dataIndex: 'createdOnDate',
+      key: 'createdOnDate',
+      width: 150,
+    },
+    {
+      title: 'Thao tác',
+      dataIndex: 'action',
+      key: 'Action',
+      align: 'center',
+      width: 150,
+      render: (_, record: any) => (
+        <Space>
+          <Button
+            onClick={() => {
+              codeTypeManagementFacade.set({
+                isVisibleForm: true,
+              });
+              codeTypeManagementFacade.getById({ id: record.id });
+              setSearchParams((prev) => {
+                prev.set('id', record.id);
+                return prev;
+              });
+            }}
+            type={'link'}
+          >
+            Sửa
+          </Button>
+          <Button danger type="link" onClick={() => handleDelete(record.id)}>
+            Xóa
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+
+  const menuItems: MenuProps['items'] =
+    typesCodeTypeManagementFacade.pagination?.content.map((item: TypesCodeTypeManagement) => ({
+      label: item.title,
+      key: item.code,
+    })) ?? [];
+
+  const handleClickMenuItems = (key: string) => {
+    menuRef.current = key;
+    formRef.current?.resetFields();
+    parsedFilter.type = key;
+    onChangeDataTable({
+      query: {
+        page: 1,
+        size,
+        filter: JSON.stringify({ ...parsedFilter }),
+      },
+    });
+    scrollLeftWhenChanging('.ant-table-body');
+    scrollTopWhenChanging('.ant-table-body');
+  };
+
+  const tool = (
+    <Space size={'middle'} className={'mx-4'}>
+      <SearchWidget form={(form) => (formRef.current = form)} callback={onChangeSearch} />
+      <Button
+        icon={<ReloadOutlined />}
+        loading={codeTypeManagementFacade.isLoading}
+        onClick={() => onChangeDataTable({})}
+      >
+        Tải lại
+      </Button>
+      <Button
+        type={'primary'}
+        icon={<PlusOutlined />}
+        onClick={() =>
+          codeTypeManagementFacade.set({
+            isVisibleForm: true,
+          })
+        }
+      >
+        Thêm mới
+      </Button>
+    </Space>
+  );
+
+  const table = useMemo(
+    () => (
+      <Spin spinning={codeTypeManagementFacade.isLoading}>
+        <Table
+          className={'w-[1000px]'}
+          size="small"
+          scroll={{ y: 'calc(100vh - 220px)' }}
+          dataSource={dataSource}
+          columns={column}
+          pagination={{
+            size: 'small',
+            className: 'pr-4',
+            showSizeChanger: true,
+            current: codeTypeManagementFacade?.pagination?.page,
+            pageSize: codeTypeManagementFacade?.pagination?.size,
+            total: codeTypeManagementFacade?.pagination?.totalElements,
+            pageSizeOptions: [20, 40, 60, 80],
+            showTotal: (total, range) => `Từ ${range[0]} đến ${range[1]} trên tổng ${total}`,
+            onChange: (page, size) => {
+              let query = codeTypeManagementFacade.query;
+              query = { ...query, page: page, size: size };
+              onChangeDataTable({ query: query });
+            },
+          }}
+          rowKey={'id'}
+          expandable={{
+            expandedRowRender: (record) => (
+              <Table
+                showHeader={false}
+                size="small"
+                pagination={false}
+                dataSource={record.codeTypeItems}
+                columns={[
+                  {
+                    title: 'STT',
+                    dataIndex: 'lineNumber',
+                    key: 'lineNumber',
+                    align: 'center',
+                    width: 80,
+                    // lấy stt ở dataSource cha
+                    render: (_, record) => {
+                      const parentIndex = dataSource.findIndex((item) => item.id === record.codeTypeId);
+                      const parentStt = dataSource[parentIndex]?.stt ?? 0;
+                      return `${parentStt}.${record.lineNumber}`;
+                    },
+                  },
+                  {
+                    title: 'Mã',
+                    dataIndex: 'code',
+                    key: 'code',
+                    width: 150,
+                  },
+                  {
+                    title: 'Tên',
+                    dataIndex: 'title',
+                    key: 'title',
+                    render: (value, record) => (
+                      <Space>
+                        <i className={`la-lg ${record?.iconClass}`}></i>
+                        <Typography.Text>{value}</Typography.Text>
+                      </Space>
+                    ),
+                  },
+                  {
+                    title: 'Ngày tạo',
+                    dataIndex: 'createdOnDate',
+                    key: 'createdOnDate',
+                    width: 150,
+                    render: (value) => formatDayjsDate(value),
+                  },
+                  {
+                    title: null,
+                    dataIndex: 'action',
+                    key: 'Action',
+                    align: 'center',
+                    width: 150,
+                  },
+                ]}
+              />
+            ),
+            rowExpandable: (record: any) => record.codeTypeItems && record.codeTypeItems.length > 0,
+          }}
+        />
+      </Spin>
+    ),
+    [codeTypeManagementFacade.isLoading],
+  );
+
+  return (
+    <>
+      <SubHeader tool={tool}>
+        {contextModalApi}
+        <div className={'max-w-8xl mx-auto p-3'}>
+          <div className={'flex items-stretch gap-4'}>
+            <Card className="w-[280px]" size="small" title={'Danh mục'}>
+              <Menu
+                inlineIndent={12}
+                defaultSelectedKeys={[parsedFilter?.type]}
+                forceSubMenuRender={true}
+                mode={'inline'}
+                items={menuItems}
+                onClick={({ key }) => handleClickMenuItems(key)}
+              />
+            </Card>
+            {table}
+          </div>
+        </div>
+      </SubHeader>
+      <EditForm />
+    </>
+  );
+};
+
+export default Page;

@@ -1,0 +1,14 @@
+import React from 'react';
+
+const ExpandleIcon = () => {
+  return (
+    <div className="w-50">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="m12 18.425-6.01-6.01L7.404 11 12 15.596 16.596 11l1.414 1.414-6.01 6.01Z" fill="currentColor"></path>
+        <path d="M12 13 5.99 6.99l1.414-1.415L12 10.172l4.596-4.597L18.01 6.99 12 13Z" fill="currentColor"></path>
+      </svg>
+    </div>
+  );
+};
+
+export default ExpandleIcon;

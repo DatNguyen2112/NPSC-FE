@@ -1,0 +1,11 @@
+import React from 'react';
+
+function DocumentInfoIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 1.5C11.0566 1.5 10.3857 2.16797 10.0547 3H3.75V21.75H20.25V3H13.9453C13.6143 2.16797 12.9434 1.5 12 1.5ZM12 3C12.416 3 12.75 3.33398 12.75 3.75V4.5H15V6H9V4.5H11.25V3.75C11.25 3.33398 11.584 3 12 3ZM5.25 4.5H7.5V7.5H16.5V4.5H18.75V20.25H5.25V4.5ZM15.9609 9.96094L11.25 14.6719L8.78906 12.2109L7.71094 13.2891L10.7109 16.2891L11.25 16.8047L11.7891 16.2891L17.0391 11.0391L15.9609 9.96094Z" fill="black"/>
+    </svg>
+  );
+}
+
+export default DocumentInfoIcon;

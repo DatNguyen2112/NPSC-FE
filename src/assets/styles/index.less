@@ -1,0 +1,236 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'suneditor/dist/css/suneditor.min.css';
+@import '/src/core';
+
+body {
+  @apply text-sm overflow-x-hidden text-gray-700 bg-gray-100;
+}
+
+.no-tooltip {
+  pointer-events: none;
+}
+
+.icon-cud {
+  @apply h-6 w-6 ~'px-1' fill-white rounded-md;
+}
+
+.ant-menu-inline {
+  @apply !border-none;
+}
+
+.ant-table-body {
+  scrollbar-width: thin;
+}
+
+.ant-drawer-body {
+  scrollbar-width: thin;
+  @apply !overflow-auto;
+}
+
+/// customer type color
+.border-color-rejected .ant-select-selector {
+  border-color: #ff0000 !important;
+  color: #ff0000 !important;
+}
+
+.border-color-rejected svg {
+  color: #ff0000;
+}
+
+.border-color-new .ant-select-selector {
+  border-color: #ff9d00 !important;
+  color: #ff9d00 !important;
+}
+
+.border-color-new svg {
+  color: #ff9d00;
+}
+
+.border-color-rising .ant-select-selector {
+  border-color: #4c9502 !important;
+  color: #4c9502 !important;
+}
+
+.border-color-rising svg {
+  color: #4c9502;
+}
+
+.border-color-contact .ant-select-selector {
+  border-color: #7841d8 !important;
+  color: #7841d8 !important;
+}
+
+.border-color-contact svg {
+  color: #7841d8;
+}
+
+.border-color-already-contact .ant-select-selector {
+  border-color: #00d5ff !important;
+  color: #00d5ff !important;
+}
+
+.border-color-already-contact svg {
+  color: #00d5ff;
+}
+
+.border-color-discuss .ant-select-selector {
+  border-color: #62de94 !important;
+  color: #62de94 !important;
+}
+
+.border-color-discuss svg {
+  color: #62de94;
+}
+
+.border-color-not-response .ant-select-selector {
+  border-color: #9e9e9e !important;
+  color: #9e9e9e !important;
+}
+
+.border-color-not-response svg {
+  color: #9e9e9e;
+}
+
+.border-color-sign-contract .ant-select-selector {
+  border-color: #00ff09 !important;
+  color: #00ff09 !important;
+}
+
+.border-color-sign-contract svg {
+  color: #00ff09;
+}
+
+.border-color-loyalty .ant-select-selector {
+  border-color: #003cff !important;
+  color: #003cff !important;
+}
+
+.border-color-loyalty svg {
+  color: #003cff;
+}
+
+.border-color-another .ant-select-selector {
+  border-color: #000000 !important;
+  color: #000000 !important;
+}
+
+.border-color-another svg {
+  color: #000000;
+}
+//////////////////////////////
+
+// lịch sử chăm sóc chi tiết
+.border-color-completed .ant-select-selector {
+  border-color: #52c41a !important;
+  color: #52c41a !important;
+}
+
+.border-color-pending .ant-select-selector {
+  border-color: #91d5ff !important;
+  color: #91d5ff !important;
+}
+
+.border-color-now .ant-select-selector {
+  border-color: #faad14 !important;
+  color: #faad14 !important;
+}
+///////////////////////////
+
+.not-mt .ant-form-item.css-dev-only-do-not-override-1t8j81u {
+  margin-bottom: 10px;
+}
+
+.miniScroll {
+  &::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #eeebeb;
+    border-radius: 0.25rem;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #bbbbbb;
+    border-radius: 0.25rem;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #a1a0a0;
+  }
+}
+.modal-fullScreen {
+  &.ant-modal {
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+  .ant-modal-content {
+    width: 100vw;
+    height: 100vh !important;
+    top: 0;
+    overflow: auto;
+  }
+  .ant-modal-body {
+    height: calc(100vh - 170px);
+  }
+}
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Cho trình duyệt Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+a {
+  @apply text-blue-500;
+}
+
+.ant-table-cell .ant-form-item {
+  margin-bottom: 0;
+}
+.ant-table-cell .ant-input-number-input {
+  text-align: right;
+}
+.text-right .ant-input-number-input {
+  text-align: right;
+}
+
+// style for custom dropdown in quotationV2
+.custom-dropdown-customer .ant-dropdown-menu {
+  max-height: 400px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.custom-dropdown-product .ant-dropdown-menu {
+  max-height: 350px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.custom-dropdown-end-debt-amount {
+  width: 350px;
+}
+
+#hiddenTitleTable {
+  .ant-table-title {
+    display: none;
+  }
+}
+.custom-table .ant-table-body::-webkit-scrollbar {
+  height: 6px !important; /* Chiều cao thanh cuộn ngang */
+  width: 6px !important; /* Chiều cao thanh cuộn ngang */
+}
+.custom-table .ant-table-body::-webkit-scrollbar-thumb:hover {
+  background-color: #40a9ff;
+}
+.custom-table .ant-table-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+#notification {
+  padding: 0px !important;
+}
