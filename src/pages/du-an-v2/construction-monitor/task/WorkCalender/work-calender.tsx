@@ -4,7 +4,24 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
-import { Button, Col, DatePicker, Form, Input, Modal, Row, Space, Table, Tag, TimePicker, Card, List, Popconfirm, message, Collapse } from 'antd';
+import {
+  Button,
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Row,
+  Space,
+  Table,
+  Tag,
+  TimePicker,
+  Card,
+  List,
+  Popconfirm,
+  message,
+  Collapse,
+} from 'antd';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -87,11 +104,7 @@ const getCurrentVietnamDate = (): Date => {
 
 // Hàm kết hợp ngày được chọn với thời gian được chọn
 const combineDateWithTime = (date: Dayjs, time: Dayjs): Dayjs => {
-  return date
-    .hour(time.hour())
-    .minute(time.minute())
-    .second(time.second())
-    .millisecond(time.millisecond());
+  return date.hour(time.hour()).minute(time.minute()).second(time.second()).millisecond(time.millisecond());
 };
 
 const { RangePicker } = DatePicker;
@@ -156,12 +169,20 @@ function WorkCalender() {
   // Xử lý khi chọn công việc từ modal
   const handleTaskSelection = (selectedTasks: any[]) => {
     console.log('Selected tasks:', selectedTasks);
-    
+
     // Chuyển đổi dữ liệu từ modal sang định dạng TaskItem
     const tasks: TaskItem[] = selectedTasks.map((task, index) => {
-      const startTime = task.startTime || dayjs().hour(9 + index).minute(0);
-      const endTime = task.endTime || dayjs().hour(10 + index).minute(0);
-      
+      const startTime =
+        task.startTime ||
+        dayjs()
+          .hour(9 + index)
+          .minute(0);
+      const endTime =
+        task.endTime ||
+        dayjs()
+          .hour(10 + index)
+          .minute(0);
+
       return {
         id: task.id || `task-${Date.now()}-${index}`,
         name: task.name || task.title || `Công việc ${index + 1}`,
@@ -174,15 +195,15 @@ function WorkCalender() {
 
     setTaskHasChoose(tasks);
     setShowModalChooseTask(false);
-    
+
     // Cập nhật form với các task đã chọn
     form.setFieldsValue({
-      listTask: tasks.map(task => ({
+      listTask: tasks.map((task) => ({
         name: task.name,
         type: task.type,
         startTime: task.startTime,
         endTime: task.endTime,
-      }))
+      })),
     });
   };
 
@@ -225,11 +246,11 @@ function WorkCalender() {
     }
 
     // Chuyển đổi các task thành events
-    const newEvents: CalendarEvent[] = taskHasChoose.map(task => convertTaskToEvent(task, executionDate));
+    const newEvents: CalendarEvent[] = taskHasChoose.map((task) => convertTaskToEvent(task, executionDate));
 
     if (editingPlanId) {
       // Cập nhật kế hoạch hiện tại
-      const updatedWorkPlans = workPlans.map(plan => {
+      const updatedWorkPlans = workPlans.map((plan) => {
         if (plan.id === editingPlanId) {
           return {
             ...plan,
@@ -278,10 +299,10 @@ function WorkCalender() {
       };
 
       // Thêm work plan vào danh sách
-      setWorkPlans(prevPlans => [newWorkPlan, ...prevPlans]);
+      setWorkPlans((prevPlans) => [newWorkPlan, ...prevPlans]);
 
       // Thêm các events mới vào danh sách events hiện tại
-      setEvents(prevEvents => [...prevEvents, ...newEvents]);
+      setEvents((prevEvents) => [...prevEvents, ...newEvents]);
 
       // Đóng modal và reset form
       setShowEventModal(false);
@@ -300,10 +321,10 @@ function WorkCalender() {
   // Xử lý khi click vào kế hoạch đã lưu
   const handlePlanClick = (plan: WorkPlan) => {
     setSelectedPlan(plan);
-    
+
     // Cập nhật events trên calendar
     setEvents(plan.events);
-    
+
     // Hiển thị thông báo
     message.info(`Đã hiển thị kế hoạch: ${plan.title} cho ngày ${dayjs(plan.executionDate).format('DD/MM/YYYY')}`);
   };
@@ -316,29 +337,29 @@ function WorkCalender() {
     setExecutionDate(plan.executionDate);
     setEditingPlanId(plan.id); // Set ID của kế hoạch đang chỉnh sửa
     setShowEventModal(true);
-    
+
     // Cập nhật form với dữ liệu hiện tại
     form.setFieldsValue({
-      listTask: plan.tasks.map(task => ({
+      listTask: plan.tasks.map((task) => ({
         name: task.name,
         type: task.type,
         startTime: task.startTime,
         endTime: task.endTime,
-      }))
+      })),
     });
   };
 
   // Xử lý xóa kế hoạch
   const handleDeletePlan = (planId: string, event: React.MouseEvent) => {
     event.stopPropagation();
-    
-    setWorkPlans(prevPlans => prevPlans.filter(plan => plan.id !== planId));
-    
+
+    setWorkPlans((prevPlans) => prevPlans.filter((plan) => plan.id !== planId));
+
     // Nếu đang xem kế hoạch bị xóa, thì clear selection và reset events
     if (selectedPlan?.id === planId) {
       setSelectedPlan(null);
     }
-    
+
     message.success('Đã xóa kế hoạch thành công');
   };
 
@@ -387,12 +408,12 @@ function WorkCalender() {
   useEffect(() => {
     if (taskHasChoose?.length) {
       form.setFieldsValue({
-        listTask: taskHasChoose.map(task => ({
+        listTask: taskHasChoose.map((task) => ({
           name: task.name,
           type: task.type,
           startTime: task.startTime,
           endTime: task.endTime,
-        }))
+        })),
       });
     }
   }, [taskHasChoose]);
@@ -420,7 +441,7 @@ function WorkCalender() {
   const handleEventClick = (info: any) => {
     const event = info.event;
 
-    console.log(info)
+    console.log(info);
 
     const clickedEvent: CalendarEvent = {
       id: event.id,
@@ -550,7 +571,7 @@ function WorkCalender() {
 
     if (calendarRef.current) {
       const calendarApi = calendarRef.current.getApi();
-      calendarApi.gotoDate(newDate); 
+      calendarApi.gotoDate(newDate);
     }
   };
 
@@ -719,22 +740,18 @@ function WorkCalender() {
 
           <div className="events-list">
             <h3>Công việc trong ngày</h3>
-            
+
             {/* Kế hoạch đã lưu */}
             {workPlans.length > 0 && (
               <div className="saved-plans-section">
-                <Collapse 
-                  size="small" 
-                  className="saved-plans-collapse"
-                  defaultActiveKey={['1']}
-                >
-                  <Panel 
+                <Collapse size="small" className="saved-plans-collapse" defaultActiveKey={['1']}>
+                  <Panel
                     header={
                       <span className="font-semibold">
                         <CalendarOutlined className="mr-2" />
                         Kế hoạch đã lưu ({workPlans.length})
                       </span>
-                    } 
+                    }
                     key="1"
                   >
                     <div className="saved-plans-list">
@@ -786,9 +803,7 @@ function WorkCalender() {
                             <div className="text-xs text-gray-500">
                               Ngày: {dayjs(plan.executionDate).format('DD/MM/YYYY')}
                             </div>
-                            <div className="text-xs">
-                              {plan.tasks.length} công việc
-                            </div>
+                            <div className="text-xs">{plan.tasks.length} công việc</div>
                           </div>
                         </div>
                       ))}
@@ -849,12 +864,12 @@ function WorkCalender() {
             initialView="dayGridMonth"
             headerToolbar={renderHeaderToolbar()}
             events={events}
-            dateClick={handleDateClick}
-            eventClick={handleEventClick}
+            // dateClick={handleDateClick}
+            // eventClick={handleEventClick}
             selectable={true}
             select={handleSelect}
-            editable={true}
-            eventResizableFromStart={true}
+            // editable={true}
+            // eventResizableFromStart={true}
             selectMirror={true}
             dayMaxEvents={true}
             weekends={true}
@@ -887,17 +902,17 @@ function WorkCalender() {
 
       {/* Event Modal */}
       {showEventModal && (
-        <Modal 
-          width={800} 
-          title={editingPlanId ? `Cập nhật kế hoạch: ${planTitle}` : "Thêm mới kế hoạch - Chọn công việc"} 
-          open={showEventModal} 
+        <Modal
+          width={800}
+          title={editingPlanId ? `Cập nhật kế hoạch: ${planTitle}` : 'Thêm mới kế hoạch - Chọn công việc'}
+          open={showEventModal}
           onCancel={handleCloseModal}
           footer={[
             <Button key="cancel" onClick={handleCloseModal}>
               Hủy
             </Button>,
             <Button key="submit" type="primary" onClick={handleSubmitTasks}>
-              {editingPlanId ? "Cập nhật kế hoạch" : "Lưu kế hoạch"}
+              {editingPlanId ? 'Cập nhật kế hoạch' : 'Lưu kế hoạch'}
             </Button>,
           ]}
         >
@@ -913,8 +928,8 @@ function WorkCalender() {
                     },
                   ]}
                 >
-                  <Input 
-                    placeholder="Nhập tiêu đề kế hoạch" 
+                  <Input
+                    placeholder="Nhập tiêu đề kế hoạch"
                     value={planTitle}
                     onChange={(e) => setPlanTitle(e.target.value)}
                   />
@@ -922,7 +937,6 @@ function WorkCalender() {
               </Col>
               <Col xs={8}>
                 <Form.Item
-                 
                   label="Ngày thực hiện"
                   rules={[
                     {
@@ -940,10 +954,9 @@ function WorkCalender() {
                     placeholder="Chọn ngày thực hiện"
                   />
                   <div className="text-xs text-gray-500 mt-1">
-                    {editingPlanId ? 
-                      `Ngày hiện tại của kế hoạch: ${dayjs(selectedPlan?.executionDate).format('DD/MM/YYYY')}` :
-                      `Ngày được chọn từ mini calendar: ${dayjs(selectedDate).format('DD/MM/YYYY')}`
-                    }
+                    {editingPlanId
+                      ? `Ngày hiện tại của kế hoạch: ${dayjs(selectedPlan?.executionDate).format('DD/MM/YYYY')}`
+                      : `Ngày được chọn từ mini calendar: ${dayjs(selectedDate).format('DD/MM/YYYY')}`}
                   </div>
                 </Form.Item>
               </Col>
@@ -956,7 +969,7 @@ function WorkCalender() {
                 icon={<PlusOutlined />}
                 onClick={() => setShowModalChooseTask(true)}
               >
-                {editingPlanId ? "Thêm công việc mới" : "Chọn công việc"}
+                {editingPlanId ? 'Thêm công việc mới' : 'Chọn công việc'}
               </Button>
             </div>
 
@@ -971,30 +984,10 @@ function WorkCalender() {
             {taskHasChoose.length > 0 && (
               <div className="selected-tasks-section">
                 <h4>Danh sách công việc đã chọn ({taskHasChoose.length})</h4>
-                <Table
-                  dataSource={taskHasChoose}
-                  pagination={false}
-                  rowKey="id"
-                  size="small"
-                >
-                  <Table.Column
-                    title="STT"
-                    key="index"
-                    width={60}
-                    render={(_, __, index) => index + 1}
-                  />
-                  <Table.Column
-                    title="Công việc"
-                    dataIndex="name"
-                    key="name"
-                    width={200}
-                  />
-                  <Table.Column
-                    title="Phân loại"
-                    dataIndex="type"
-                    key="type"
-                    width={120}
-                  />
+                <Table dataSource={taskHasChoose} pagination={false} rowKey="id" size="small">
+                  <Table.Column title="STT" key="index" width={60} render={(_, __, index) => index + 1} />
+                  <Table.Column title="Công việc" dataIndex="name" key="name" width={200} />
+                  <Table.Column title="Phân loại" dataIndex="type" key="type" width={120} />
                   <Table.Column
                     title="Thời gian bắt đầu"
                     key="startTime"
@@ -1034,19 +1027,15 @@ function WorkCalender() {
                     key="action"
                     width={80}
                     render={(_, __, index) => (
-                      <Button
-                        type="link"
-                        danger
-                        icon={<CloseOutlined />}
-                        onClick={() => handleRemoveTask(index)}
-                      />
+                      <Button type="link" danger icon={<CloseOutlined />} onClick={() => handleRemoveTask(index)} />
                     )}
                   />
                 </Table>
 
                 <div className="mt-4 p-3 bg-blue-50 rounded">
                   <div className="text-sm text-blue-700">
-                    <strong>Lưu ý:</strong> Tất cả công việc sẽ được lên lịch cho ngày <strong>{executionDate.format('DD/MM/YYYY')}</strong>
+                    <strong>Lưu ý:</strong> Tất cả công việc sẽ được lên lịch cho ngày{' '}
+                    <strong>{executionDate.format('DD/MM/YYYY')}</strong>
                     {editingPlanId && (
                       <div className="mt-1">
                         <strong>Đang chỉnh sửa kế hoạch hiện tại.</strong>
