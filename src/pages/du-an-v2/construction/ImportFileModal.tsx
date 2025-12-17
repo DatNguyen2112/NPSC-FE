@@ -75,20 +75,18 @@ const ImportFileModal: FC = () => {
             Tải lên file danh sách công trình
           </Button>
         )}
-        <p className="mt-2">
+        {/* <p className="mt-2">
           Tải file mẫu nhập danh sách công trình{' '}
           <a
             download="ConstructionTemplate.xlsx"
-            href={linkFile + '/excel-template/ConstructionTemplate.xlsx'}
+            href={'http://npsc.geneat.pro/api/v1/files/excel-template/ConstructionTemplate.xlsx'}
             target="_blank"
             rel="noreferrer"
           >
             tại đây
           </a>
-        </p>
-        <Checkbox className="mt-2" checked={isOverwrite} onChange={(e) => setIsOverwrite(e.target.checked)}>
-          Ghi đè thông tin công trình đã có
-        </Checkbox>
+        </p> */}
+        {/* ref */}
         <div className="font-medium">
           <p>Lưu ý</p>
           <p>- Việc ghi đè sẽ xoá hết các thông tin cũ của công trình bị đè để lưu thông tin mới</p>
