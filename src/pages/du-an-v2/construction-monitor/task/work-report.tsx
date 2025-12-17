@@ -1826,6 +1826,29 @@ export default function WorkReport() {
                 </div>
                 <Space size={16}>
                   <Select
+                    showSearch
+                    allowClear
+                    optionFilterProp="label"
+                    options={codeTypeFacade.pagination?.content
+                      ?.filter((x: CodeTypeModel) => x.type == 'TASK_TYPE')
+                      ?.map((item) => ({
+                        label: item.title,
+                        value: item.code,
+                      }))}
+                    placeholder="Chọn phân loại"
+                    className="w-36"
+                    onChange={(taskType) => {
+                      onChangeDataTablePersonal({
+                        query: {
+                          page: 1,
+                          size,
+                          filter: JSON.stringify({ ...JSON.parse(filter), taskType }),
+                        },
+                      });
+                    }}
+                    value={parsedFilter?.taskType}
+                  />
+                  <Select
                     className="w-36"
                     placeholder="Chọn độ ưu tiên"
                     allowClear
